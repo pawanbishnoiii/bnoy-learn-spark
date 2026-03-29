@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   LayoutDashboard, BookOpen, Flame, Trophy, User, LogOut,
-  BarChart3, Settings, Bookmark, Users, HelpCircle, DollarSign, Target, FileText, CreditCard, Bell,
+  BarChart3, Settings, Bookmark, Users, HelpCircle, DollarSign, Target, FileText, CreditCard, Bell, Eye,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import MobileBottomNav from '@/components/MobileBottomNav';
@@ -33,6 +33,7 @@ const studentNav = [
 
 const adminNav = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+  { title: 'Student View', url: '/dashboard', icon: Eye },
   { title: 'Courses', url: '/admin/courses', icon: BookOpen },
   { title: 'Subjects', url: '/admin/subjects', icon: FileText },
   { title: 'Topics', url: '/admin/topics', icon: Target },
