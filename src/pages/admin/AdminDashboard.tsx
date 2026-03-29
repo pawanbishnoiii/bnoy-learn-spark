@@ -32,26 +32,26 @@ export default function AdminDashboard() {
   });
 
   const statCards = [
-    { label: 'Courses', value: stats?.courses || 0, icon: BookOpen, color: 'text-primary', bg: 'bg-primary/10' },
-    { label: 'Subjects', value: stats?.subjects || 0, icon: FileText, color: 'text-accent', bg: 'bg-accent/10' },
-    { label: 'Topics', value: stats?.topics || 0, icon: Target, color: 'text-warning', bg: 'bg-warning/10' },
-    { label: 'Questions', value: stats?.questions || 0, icon: HelpCircle, color: 'text-success', bg: 'bg-success/10' },
-    { label: 'Students', value: stats?.students || 0, icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
-    { label: 'Attempts', value: stats?.attempts || 0, icon: BarChart3, color: 'text-accent', bg: 'bg-accent/10' },
-    { label: 'Purchases', value: stats?.purchases || 0, icon: CreditCard, color: 'text-success', bg: 'bg-success/10' },
+    { label: 'Courses', value: stats?.courses || 0, icon: BookOpen, bg: 'bg-primary/8', color: 'text-primary' },
+    { label: 'Subjects', value: stats?.subjects || 0, icon: FileText, bg: 'bg-accent/8', color: 'text-accent' },
+    { label: 'Topics', value: stats?.topics || 0, icon: Target, bg: 'bg-warning/8', color: 'text-warning' },
+    { label: 'Questions', value: stats?.questions || 0, icon: HelpCircle, bg: 'bg-success/8', color: 'text-success' },
+    { label: 'Students', value: stats?.students || 0, icon: Users, bg: 'bg-primary/8', color: 'text-primary' },
+    { label: 'Attempts', value: stats?.attempts || 0, icon: BarChart3, bg: 'bg-accent/8', color: 'text-accent' },
+    { label: 'Purchases', value: stats?.purchases || 0, icon: CreditCard, bg: 'bg-success/8', color: 'text-success' },
   ];
 
   const quickLinks = [
-    { title: 'Manage Courses', desc: 'Add/edit courses & test series', icon: BookOpen, url: '/admin/courses', color: 'bg-primary/10 text-primary' },
-    { title: 'Manage Subjects', desc: 'Organize subjects under courses', icon: FileText, url: '/admin/subjects', color: 'bg-accent/10 text-accent' },
-    { title: 'Manage Topics', desc: 'Create topics under subjects', icon: Target, url: '/admin/topics', color: 'bg-warning/10 text-warning' },
-    { title: 'Manage Questions', desc: 'Add, import & export questions', icon: HelpCircle, url: '/admin/questions', color: 'bg-success/10 text-success' },
-    { title: 'User Management', desc: 'View & manage all users', icon: Users, url: '/admin/users', color: 'bg-primary/10 text-primary' },
-    { title: 'Analytics', desc: 'View platform analytics', icon: BarChart3, url: '/admin/analytics', color: 'bg-accent/10 text-accent' },
-    { title: 'Leaderboard', desc: 'Manage leaderboard & rankings', icon: Trophy, url: '/leaderboard', color: 'bg-warning/10 text-warning' },
-    { title: 'Pricing Plans', desc: 'Manage subscription plans', icon: DollarSign, url: '/admin/pricing', color: 'bg-success/10 text-success' },
-    { title: 'Notifications', desc: 'Send notifications to users', icon: Bell, url: '/admin/notifications', color: 'bg-primary/10 text-primary' },
-    { title: 'Settings', desc: 'App settings, banners, Razorpay', icon: Settings, url: '/admin/settings', color: 'bg-accent/10 text-accent' },
+    { title: 'Manage Courses', desc: 'Add/edit courses & test series', icon: BookOpen, url: '/admin/courses', bg: 'bg-primary/8', color: 'text-primary' },
+    { title: 'Manage Subjects', desc: 'Organize subjects', icon: FileText, url: '/admin/subjects', bg: 'bg-accent/8', color: 'text-accent' },
+    { title: 'Manage Topics', desc: 'Create topics', icon: Target, url: '/admin/topics', bg: 'bg-warning/8', color: 'text-warning' },
+    { title: 'Manage Questions', desc: 'Add & import questions', icon: HelpCircle, url: '/admin/questions', bg: 'bg-success/8', color: 'text-success' },
+    { title: 'User Management', desc: 'View & manage users', icon: Users, url: '/admin/users', bg: 'bg-primary/8', color: 'text-primary' },
+    { title: 'Analytics', desc: 'Platform analytics', icon: BarChart3, url: '/admin/analytics', bg: 'bg-accent/8', color: 'text-accent' },
+    { title: 'Leaderboard', desc: 'Manage rankings', icon: Trophy, url: '/leaderboard', bg: 'bg-warning/8', color: 'text-warning' },
+    { title: 'Pricing Plans', desc: 'Subscription plans', icon: DollarSign, url: '/admin/pricing', bg: 'bg-success/8', color: 'text-success' },
+    { title: 'Notifications', desc: 'Send notifications', icon: Bell, url: '/admin/notifications', bg: 'bg-primary/8', color: 'text-primary' },
+    { title: 'Settings', desc: 'App settings & Razorpay', icon: Settings, url: '/admin/settings', bg: 'bg-accent/8', color: 'text-accent' },
   ];
 
   return (
@@ -59,18 +59,19 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         <h1 className="font-heading text-2xl md:text-3xl font-bold">Admin Dashboard</h1>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {statCards.map((c, i) => (
             <motion.div key={c.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
               <Card className="glass-card border-0">
                 <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground">{c.label}</p>
-                      <p className="text-2xl font-heading font-bold mt-1">{c.value}</p>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-11 h-11 rounded-2xl ${c.bg} flex items-center justify-center`}>
+                      <c.icon className={`w-5 h-5 ${c.color}`} />
                     </div>
-                    <div className={`p-2 rounded-lg ${c.bg} ${c.color}`}><c.icon className="w-5 h-5" /></div>
+                    <div>
+                      <p className="text-2xl font-heading font-bold">{c.value}</p>
+                      <p className="text-[11px] text-muted-foreground">{c.label}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -78,17 +79,16 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Quick Links */}
         <div>
           <h2 className="font-heading text-lg font-semibold mb-4">Quick Access</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {quickLinks.map((link, i) => (
               <motion.div key={link.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                 <Link to={link.url}>
                   <Card className="glass-card border-0 hover:shadow-md transition-all hover:-translate-y-0.5 group cursor-pointer">
                     <CardContent className="p-4 flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl ${link.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                        <link.icon className="w-6 h-6" />
+                      <div className={`w-12 h-12 rounded-2xl ${link.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                        <link.icon className={`w-6 h-6 ${link.color}`} />
                       </div>
                       <div className="min-w-0">
                         <p className="font-heading font-semibold text-sm group-hover:text-primary transition-colors">{link.title}</p>
