@@ -29,7 +29,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       set({ session, user: session?.user ?? null });
       if (session?.user) {
-        // Use setTimeout to avoid Supabase deadlock
         setTimeout(() => {
           get().fetchProfile(session.user.id);
           get().fetchRoles(session.user.id);
@@ -79,6 +78,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   fetchRoles: async (userId) => {
     const { data } = await supabase.from('user_roles').select('role').eq('user_id', userId);
     const roles = data?.map((r: any) => r.role) || [];
-    set({ roles, isAdmin: roles.includes('admin'), isLoading: false });
+    
+    // Auto-assign student role if no roles exist
+    if (roles.length === 0) {
+      await supabase.from('user_roles').insert({ user_id: userId, role: 'student' });
+      set({ roles: ['student'], isAdmin: false, isLoading: false });
+    } else {
+      set({ roles, isAdmin: roles.includes('admin'), isLoading: false });
+    }
   },
 }));
