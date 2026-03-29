@@ -1,10 +1,11 @@
 import DashboardLayout from '@/components/DashboardLayout';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuthStore } from '@/stores/authStore';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { Trophy, Flame, Target, Crown, Medal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +21,7 @@ export default function Leaderboard() {
       const { data: profiles } = await supabase.from('profiles').select('*').order('xp_points', { ascending: false }).limit(100);
       if (!profiles) return [];
       const userIds = profiles.map(p => p.user_id);
-      const { data: attempts } = await supabase.from('quiz_attempts').select('user_id, correct_answers, total_questions, time_taken_seconds').eq('is_completed', true).in('user_id', userIds);
+      const { data: attempts } = await supabase.from('quiz_attempts').select('user_id, correct_answers, total_questions').eq('is_completed', true).in('user_id', userIds);
       const statsMap: Record<string, { quizzes: number; correct: number; total: number }> = {};
       attempts?.forEach(a => {
         if (!statsMap[a.user_id]) statsMap[a.user_id] = { quizzes: 0, correct: 0, total: 0 };
@@ -61,7 +62,9 @@ export default function Leaderboard() {
         </Tabs>
 
         {/* Podium */}
-        {top3.length >= 3 && (
+        {isLoading ? (
+          <Skeleton className="h-48 rounded-2xl" />
+        ) : top3.length >= 3 ? (
           <div className="flex items-end justify-center gap-3 pt-4 pb-2">
             {/* 2nd Place */}
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center w-24">
@@ -114,12 +117,14 @@ export default function Leaderboard() {
               </div>
             </motion.div>
           </div>
-        )}
+        ) : null}
 
         {/* Full List */}
         <Card className="glass-card border-0">
           <CardContent className="p-0 divide-y divide-border">
-            {leaders?.map((l, i) => (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14 m-2 rounded-xl" />)
+            ) : leaders?.map((l, i) => (
               <motion.div key={l.user_id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
                 className={`flex items-center gap-3 px-4 py-3.5 ${l.user_id === user?.id ? 'bg-primary/5' : ''}`}>
                 <div className="w-7 text-center">
