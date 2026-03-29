@@ -191,6 +191,83 @@ export type Database = {
           },
         ]
       }
+      doubt_messages: {
+        Row: {
+          created_at: string
+          doubt_id: string
+          id: string
+          image_url: string | null
+          is_admin: boolean
+          message: string | null
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          doubt_id: string
+          id?: string
+          image_url?: string | null
+          is_admin?: boolean
+          message?: string | null
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          doubt_id?: string
+          id?: string
+          image_url?: string | null
+          is_admin?: boolean
+          message?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doubt_messages_doubt_id_fkey"
+            columns: ["doubt_id"]
+            isOneToOne: false
+            referencedRelation: "doubts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doubts: {
+        Row: {
+          admin_reply: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          admin_reply?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          admin_reply?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -227,10 +304,12 @@ export type Database = {
           created_at: string
           daily_streak: number
           full_name: string | null
+          gender: string | null
           id: string
           language_preference: string | null
           last_active_date: string | null
           onboarding_completed: boolean | null
+          phone: string | null
           preparation_goal: string | null
           updated_at: string
           user_id: string
@@ -241,10 +320,12 @@ export type Database = {
           created_at?: string
           daily_streak?: number
           full_name?: string | null
+          gender?: string | null
           id?: string
           language_preference?: string | null
           last_active_date?: string | null
           onboarding_completed?: boolean | null
+          phone?: string | null
           preparation_goal?: string | null
           updated_at?: string
           user_id: string
@@ -255,16 +336,56 @@ export type Database = {
           created_at?: string
           daily_streak?: number
           full_name?: string | null
+          gender?: string | null
           id?: string
           language_preference?: string | null
           last_active_date?: string | null
           onboarding_completed?: boolean | null
+          phone?: string | null
           preparation_goal?: string | null
           updated_at?: string
           user_id?: string
           xp_points?: number
         }
         Relationships: []
+      }
+      question_reports: {
+        Row: {
+          admin_response: string | null
+          created_at: string
+          id: string
+          question_id: string
+          report_text: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_response?: string | null
+          created_at?: string
+          id?: string
+          question_id: string
+          report_text: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_response?: string | null
+          created_at?: string
+          id?: string
+          question_id?: string
+          report_text?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       questions: {
         Row: {
