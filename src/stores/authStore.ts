@@ -41,6 +41,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { data: { session } } = await supabase.auth.getSession();
     set({ session, user: session?.user ?? null, isLoading: false });
     if (session?.user) {
+      // Sync Google/OAuth avatar and name to profile
+      const meta = session.user.user_metadata;
+      if (meta) {
+        const updates: Record<string, any> = {};
+        if (meta.avatar_url) updates.avatar_url = meta.avatar_url;
+        if (meta.full_name) updates.full_name = meta.full_name;
+        if (meta.name && !meta.full_name) updates.full_name = meta.name;
+        if (Object.keys(updates).length > 0) {
+          await supabase.from('profiles').update(updates).eq('user_id', session.user.id).is('avatar_url', null);
+        }
+      }
       await get().fetchProfile(session.user.id);
       await get().fetchRoles(session.user.id);
     } else {
@@ -71,7 +82,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   fetchProfile: async (userId) => {
-    const { data } = await supabase.from('profiles').select('*').eq('user_id', userId).single();
+    const { data } = await supabase.from('profiles').select('*').eq('user_id', userId).maybeSingle();
     set({ profile: data });
   },
 
@@ -79,9 +90,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { data } = await supabase.from('user_roles').select('role').eq('user_id', userId);
     const roles = data?.map((r: any) => r.role) || [];
     
-    // Auto-assign student role if no roles exist
     if (roles.length === 0) {
-      await supabase.from('user_roles').insert({ user_id: userId, role: 'student' });
+      await (supabase as any).from('user_roles').insert({ user_id: userId, role: 'student' });
       set({ roles: ['student'], isAdmin: false, isLoading: false });
     } else {
       set({ roles, isAdmin: roles.includes('admin'), isLoading: false });
