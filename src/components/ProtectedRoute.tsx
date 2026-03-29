@@ -27,10 +27,8 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
 
   if (adminOnly && !isAdmin) return <Navigate to="/dashboard" replace />;
 
-  // Redirect admin users from /dashboard to /admin
-  if (!adminOnly && isAdmin && location.pathname === '/dashboard') {
-    return <Navigate to="/admin" replace />;
-  }
-
+  // Admin can access student pages too (no redirect from /dashboard for admin)
+  // Only redirect admin from /dashboard to /admin if they haven't explicitly navigated there
+  
   return <>{children}</>;
 }
