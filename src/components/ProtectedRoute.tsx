@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,12 +20,17 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
 
   if (!user) return <Navigate to="/login" replace />;
   
-  // Check onboarding - redirect if not completed (except when already on onboarding page)
+  // Check onboarding
   if (profile && !profile.onboarding_completed && location.pathname !== '/onboarding' && !adminOnly) {
     return <Navigate to="/onboarding" replace />;
   }
 
   if (adminOnly && !isAdmin) return <Navigate to="/dashboard" replace />;
+
+  // Redirect admin users from /dashboard to /admin
+  if (!adminOnly && isAdmin && location.pathname === '/dashboard') {
+    return <Navigate to="/admin" replace />;
+  }
 
   return <>{children}</>;
 }

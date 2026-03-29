@@ -3,15 +3,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
-import { MessageSquare, Plus, Upload, Clock, CheckCircle2, Image } from 'lucide-react';
+import { MessageSquare, Plus, Upload, Clock, CheckCircle2, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DoubtsPage() {
@@ -21,8 +22,10 @@ export default function DoubtsPage() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { data: doubts } = useQuery({
     queryKey: ['my-doubts', user?.id],
@@ -37,15 +40,22 @@ export default function DoubtsPage() {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     setUploading(true);
+    setUploadProgress(0);
     try {
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(p => Math.min(p + 15, 90));
+      }, 200);
       const path = `doubts/${user.id}/${Date.now()}-${file.name}`;
       const { error } = await supabase.storage.from('thumbnails').upload(path, file, { upsert: true });
+      clearInterval(progressInterval);
       if (error) throw error;
       const { data: urlData } = supabase.storage.from('thumbnails').getPublicUrl(path);
       setImageUrl(urlData.publicUrl);
+      setUploadProgress(100);
       toast.success('Image uploaded!');
     } catch (err: any) { toast.error(err.message); }
-    setUploading(false);
+    setTimeout(() => { setUploading(false); setUploadProgress(0); }, 500);
   };
 
   const submitDoubt = useMutation({
@@ -53,12 +63,13 @@ export default function DoubtsPage() {
       if (!user || !title.trim()) throw new Error('Title required');
       const { error } = await (supabase as any).from('doubts').insert({
         user_id: user.id, title, description, image_url: imageUrl || null,
+        whatsapp_number: whatsapp || null,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['my-doubts'] });
-      setOpen(false); setTitle(''); setDescription(''); setImageUrl('');
+      setOpen(false); setTitle(''); setDescription(''); setImageUrl(''); setWhatsapp('');
       toast.success('Doubt submitted! Admin will reply soon.');
     },
     onError: (e: any) => toast.error(e.message),
@@ -80,7 +91,7 @@ export default function DoubtsPage() {
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-fire-gradient border-0"><Plus className="w-4 h-4 mr-1" /> Ask Doubt</Button>
+              <Button className="bg-fire-gradient border-0 rounded-2xl"><Plus className="w-4 h-4 mr-1" /> Ask Doubt</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle className="font-heading">Ask a Doubt</DialogTitle></DialogHeader>
@@ -88,14 +99,24 @@ export default function DoubtsPage() {
                 <div><Label>Title</Label><Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Brief question" /></div>
                 <div><Label>Description</Label><Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Explain your doubt in detail..." rows={4} /></div>
                 <div>
+                  <Label className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp Number (optional)</Label>
+                  <Input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+91 9876543210" type="tel" />
+                </div>
+                <div>
                   <Label>Upload Image (optional)</Label>
-                  {imageUrl && <img src={imageUrl} alt="Doubt" className="w-full h-32 object-cover rounded-lg mt-2 mb-2" />}
-                  <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading}>
+                  {imageUrl && <img src={imageUrl} alt="Doubt" className="w-full h-32 object-cover rounded-xl mt-2 mb-2" />}
+                  {uploading && (
+                    <div className="mt-2 mb-2">
+                      <Progress value={uploadProgress} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">Uploading... {uploadProgress}%</p>
+                    </div>
+                  )}
+                  <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading} className="rounded-xl">
                     <Upload className="w-4 h-4 mr-1" /> {uploading ? 'Uploading...' : 'Upload Image'}
                   </Button>
                   <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                 </div>
-                <Button onClick={() => submitDoubt.mutate()} className="w-full bg-fire-gradient border-0" disabled={submitDoubt.isPending}>
+                <Button onClick={() => submitDoubt.mutate()} className="w-full bg-fire-gradient border-0 rounded-2xl" disabled={submitDoubt.isPending}>
                   {submitDoubt.isPending ? 'Submitting...' : 'Submit Doubt'}
                 </Button>
               </div>
@@ -117,7 +138,7 @@ export default function DoubtsPage() {
                 <Card className="glass-card border-0">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center flex-shrink-0">
                         <MessageSquare className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -126,14 +147,12 @@ export default function DoubtsPage() {
                           <Badge className={`text-[10px] ${statusColors[d.status] || statusColors.open}`}>{d.status}</Badge>
                         </div>
                         {d.description && <p className="text-sm text-muted-foreground">{d.description}</p>}
-                        {d.image_url && (
-                          <img src={d.image_url} alt="Doubt" className="mt-2 rounded-lg max-h-32 object-cover" />
-                        )}
+                        {d.image_url && <img src={d.image_url} alt="Doubt" className="mt-2 rounded-xl max-h-32 object-cover" />}
                         <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {new Date(d.created_at).toLocaleString()}
                         </p>
                         {d.admin_reply && (
-                          <div className="mt-3 p-3 rounded-lg bg-success/5 border border-success/20">
+                          <div className="mt-3 p-3 rounded-xl bg-success/5 border border-success/15">
                             <p className="text-xs font-medium text-success mb-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Admin Reply</p>
                             <p className="text-sm">{d.admin_reply}</p>
                           </div>
