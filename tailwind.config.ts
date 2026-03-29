@@ -7,12 +7,12 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1.5rem",
       screens: { "2xl": "1400px" },
     },
     extend: {
       fontFamily: {
-        heading: ["Space Grotesk", "sans-serif"],
+        heading: ["Poppins", "sans-serif"],
         body: ["Inter", "sans-serif"],
       },
       colors: {
@@ -57,11 +57,6 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        fire: {
-          start: "hsl(var(--fire-start))",
-          mid: "hsl(var(--fire-mid))",
-          end: "hsl(var(--fire-end))",
-        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -74,6 +69,8 @@ export default {
         },
       },
       borderRadius: {
+        "2xl": "1.25rem",
+        "3xl": "1.5rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -109,11 +106,20 @@ export default {
         },
         float: {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
+          "50%": { transform: "translateY(-12px)" },
         },
-        pulse_fire: {
-          "0%, 100%": { boxShadow: "0 0 20px -5px hsl(14 90% 55% / 0.3)" },
-          "50%": { boxShadow: "0 0 40px -5px hsl(14 90% 55% / 0.5)" },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0) rotate(-2deg)" },
+          "50%": { transform: "translateY(-8px) rotate(2deg)" },
+        },
+        pulse_glow: {
+          "0%, 100%": { boxShadow: "0 0 20px -5px hsl(270 70% 55% / 0.3)" },
+          "50%": { boxShadow: "0 0 50px -5px hsl(270 70% 55% / 0.5)" },
+        },
+        "gradient-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
         },
       },
       animation: {
@@ -125,7 +131,9 @@ export default {
         "slide-in-left": "slide-in-left 0.3s ease-out",
         shimmer: "shimmer 2s infinite linear",
         float: "float 3s ease-in-out infinite",
-        pulse_fire: "pulse_fire 2s ease-in-out infinite",
+        "float-slow": "float-slow 4s ease-in-out infinite",
+        pulse_glow: "pulse_glow 2s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 6s ease infinite",
       },
     },
   },
