@@ -14,7 +14,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-grid opacity-10" />
 
       {/* Floating question marks - matching reference */}
-      <motion.div className="absolute top-[15%] left-[5%] text-6xl font-black text-pink-300/40"
+      <motion.div className="absolute top-[15%] left-[5%] text-6xl font-black text-primary-foreground/20"
         animate={{ y: [0, -15, 0], rotate: [-10, 5, -10] }} transition={{ duration: 5, repeat: Infinity }}>?</motion.div>
       <motion.div className="absolute top-[10%] right-[15%] text-8xl font-black text-primary-foreground/15"
         animate={{ y: [0, -20, 0], rotate: [5, -5, 5] }} transition={{ duration: 6, repeat: Infinity }}>?</motion.div>
